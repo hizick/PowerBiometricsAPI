@@ -39,14 +39,7 @@ namespace PowerBiometricsAPI.Controllers
         public bool Post([FromBody] UserInfo user)
         {
             bool status = false;
-            //UserInfo user = new UserInfo()
-            //{
-            //    CompanyId = "ABRAAJ",
-            //    DepartmentId = "DEFAULT",
-            //    DivisionId = "DEFAULT",
-            //    EmployeeId = "Admin",
-            //    //Password = "isaaaac"
-            //};
+
             if (user != null)
             {
                 PayrollEmployees payrollEmployees = _DBContext.PayrollEmployees

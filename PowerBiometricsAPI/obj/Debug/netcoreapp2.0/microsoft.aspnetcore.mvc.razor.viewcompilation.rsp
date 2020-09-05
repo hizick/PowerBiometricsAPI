@@ -1,0 +1,5 @@
+C:\inetpub\PowerBiometricsAPI\PowerBiometricsAPI
+--output-path=obj\Debug\netcoreapp2.0\
+--application-name=PowerBiometricsAPI
+--content-root=C:\inetpub\PowerBiometricsAPI\PowerBiometricsAPI
+--file=

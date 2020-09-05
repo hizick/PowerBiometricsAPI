@@ -24,7 +24,6 @@ namespace PowerBiometricsAPI.DomainModels
         public string BranchCode { get; set; }
         public string LockedBy { get; set; }
         public DateTime? LockTs { get; set; }
-        public string token { get; set; }
         public List<AttendanceDetail> attendanceDetail { get; set; }
 
     }

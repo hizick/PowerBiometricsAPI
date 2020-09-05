@@ -2,10 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Controllers\Mapping.cs" />
+    <Compile Remove="DomainModels\LoginController.cs" />
   </ItemGroup>
 
   <ItemGroup>

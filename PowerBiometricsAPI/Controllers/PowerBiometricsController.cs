@@ -8,11 +8,10 @@ using PowerBiometricsAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PowerBiometricsAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     public class PowerBiometricsController : Controller
     {
         EnterpriseBaseContext _DBContext;
@@ -28,12 +27,8 @@ namespace PowerBiometricsAPI.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
-        [HttpGet("{periodFrom}/{periodTo}")]
-
-        // POST api/values
-        [HttpPost]//("{token}")]
-        public string Post([FromBody]List<Attendance> attendance)
+        [HttpPost]
+        public async Task<string> Post([FromHeader]List<Attendance> attendance)
         {
             List<PayrollHrpayrollAttHeader> payrollHrpayrollAttHeader = new List<PayrollHrpayrollAttHeader>();
             //Apitoken apiToken = new Apitoken();
@@ -43,7 +38,7 @@ namespace PowerBiometricsAPI.Controllers
             string finalResult = "failed";
             try
             {
-                var apiToken = _DBContext.ApiToken.Where(a => a.Token == att.apiToken).FirstOrDefault();
+                var apiToken = await _DBContext.ApiToken.Where(a => a.Token == att.apiToken).FirstOrDefaultAsync();
                 if (apiToken != null)
                 {
                     if (attendance != null)
@@ -69,15 +64,15 @@ namespace PowerBiometricsAPI.Controllers
 
                             _DBContext.Entry(payrollHrpayrollAttHeaderObj).State = EntityState.Added;
 
-                            status = insertAttendanceDetail(apiToken, attendanceObj.attendanceDetail);
+                            status = await insertAttendanceDetail(apiToken, attendanceObj.attendanceDetail);
 
                             if (status)
                             {
-                                _DBContext.SaveChanges();
+                                await _DBContext.SaveChangesAsync();
                             }
 
                         }
-                        return finalResult = "success";
+                        finalResult = "success";
                     }
 
                 }
@@ -90,10 +85,10 @@ namespace PowerBiometricsAPI.Controllers
             {
                 finalResult = ExceptionExtensions.GetFullMessage(e);
             }
-            return finalResult;
+            return await Task.FromResult(finalResult);
         }
 
-        private bool insertAttendanceDetail(Apitoken apiToken, List<AttendanceDetail> attendanceDetail)
+        private async Task<bool> insertAttendanceDetail(Apitoken apiToken, List<AttendanceDetail> attendanceDetail)
         {
             AttendanceDetail payrollHrpayrollAttDetail = new AttendanceDetail();
             List<AttendanceDetail> attend = attendanceDetail;
@@ -108,7 +103,7 @@ namespace PowerBiometricsAPI.Controllers
                     foreach (AttendanceDetail attendanceDetailObj in att)
                     {
                         PayrollHrpayrollAttDetail payrollHrpayrollAttDetailObj = new PayrollHrpayrollAttDetail();
-                        employeeDeets = getEmployeeID(apiToken, attendanceDetailObj);
+                        employeeDeets = await getEmployeeID(apiToken, attendanceDetailObj);
                         string employeeID = employeeDeets.EmployeeId;
                         string employeeName = employeeDeets.EmployeeFirstname + " " + employeeDeets.EmployeeName;
 
@@ -132,7 +127,7 @@ namespace PowerBiometricsAPI.Controllers
 
                     }
 
-                    return status = true;
+                    status = true; //gets result
                 }
 
             }
@@ -141,19 +136,19 @@ namespace PowerBiometricsAPI.Controllers
                 return status = false;
             }
 
-            return status;
+            return await Task.FromResult(status);
         }
 
-        public PayrollEmployees getEmployeeID(Apitoken apiToken, AttendanceDetail attendanceDetail)
+        public async Task<PayrollEmployees> getEmployeeID(Apitoken apiToken, AttendanceDetail attendanceDetail)
         {
             PayrollEmployees employeeDeets = new PayrollEmployees();
             try
             {
-                PayrollEmployees empl = _DBContext.PayrollEmployees.Where(x => x.CompanyId == apiToken.CompanyId &&
+                PayrollEmployees empl = await _DBContext.PayrollEmployees.Where(x => x.CompanyId == apiToken.CompanyId &&
                                                      x.DivisionId == apiToken.DivisionId &&
                                                      x.DepartmentId == apiToken.DepartmentId &&
                                                      x.EmployeeBiometricID == attendanceDetail.EmployeeId).AsNoTracking().
-                                                     FirstOrDefault();
+                                                     FirstOrDefaultAsync();
 
                 employeeDeets = empl;
             }

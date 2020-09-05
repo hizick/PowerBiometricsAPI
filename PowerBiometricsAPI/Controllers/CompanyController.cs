@@ -11,9 +11,9 @@ using System.Net;
 
 namespace PowerBiometricsAPI.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/[controller]")]
-    public class CompanyController : ControllerBase
+    //[Produces("application/json")]
+    //[Route("api/[controller]")]
+    public class CompanyController : Controller
     {
         private EnterpriseBaseContext _DBContext;
         Extras utilities = new Extras();
